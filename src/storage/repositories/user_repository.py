@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone as dt_timezone
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -41,7 +41,7 @@ class UserRepository:
                 locale=locale,
                 weekly_summary_day=weekly_summary_day,
                 weekly_summary_time=weekly_summary_time,
-                last_activity_at=datetime.now(timezone.utc),
+                last_activity_at=datetime.now(dt_timezone.utc),
             )
             session.add(user)
             await session.commit()
@@ -54,7 +54,7 @@ class UserRepository:
             if not user:
                 return
             user.onboarding_completed = value
-            user.updated_at = datetime.now(timezone.utc)
+            user.updated_at = datetime.now(dt_timezone.utc)
             await session.commit()
 
     async def touch_activity(self, user_id: str) -> None:
@@ -62,7 +62,7 @@ class UserRepository:
             user = await session.get(User, user_id)
             if not user:
                 return
-            now = datetime.now(timezone.utc)
+            now = datetime.now(dt_timezone.utc)
             user.last_activity_at = now
             user.updated_at = now
             await session.commit()
@@ -73,7 +73,7 @@ class UserRepository:
             if not user:
                 return
             user.engagement_state = state
-            user.updated_at = datetime.now(timezone.utc)
+            user.updated_at = datetime.now(dt_timezone.utc)
             await session.commit()
 
     async def list_all(self) -> list[User]:
